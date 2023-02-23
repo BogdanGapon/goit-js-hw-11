@@ -42,7 +42,7 @@ function onSubmitImages(evt) {
       );
       return;
     }
-    createMarkup(hits);
+    gallery.innerHTML = createMarkup(hits);
     loadMoreBtn.show();
 
     if (totalImg < perPage)
@@ -55,8 +55,6 @@ function onClickBtnLoadMore(evt) {
   evt.preventDefault();
   pageNumber += 1;
   perPage += 40;
-  console.log('onClickBtnLoadMore ~ perPage:', perPage);
-
   let number = fetchImages(imgQuery, pageNumber).then(data => {
     const {
       data: { hits },
@@ -64,7 +62,7 @@ function onClickBtnLoadMore(evt) {
     if (data.data.totalHits < perPage) {
       Notify.info(`We're sorry, but you've reached the end of search results.`);
     }
-    createMarkup(hits);
+    gallery.insertAdjacentHTML('beforeend', createMarkup(hits));
   });
 }
 
