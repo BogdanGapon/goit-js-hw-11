@@ -5,6 +5,13 @@ export default class LoadMoreBtn {
     else this.show;
   }
 
+  disabled() {
+    this.button.disabled = true;
+  }
+
+  enabled() {
+    this.button.disabled = false;
+  }
   hide() {
     this.button.classList.add('hidden');
   }
