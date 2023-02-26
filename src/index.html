@@ -8,7 +8,7 @@
   </head>
   <body>
     <header class="header">
-      <div class="container">
+      <div class="wrap-container">
         <div class="form-wraper">
           <form class="search-form" id="search-form">
             <input
@@ -23,10 +23,13 @@
         </div>
       </div>
     </header>
-    <div class="container">
-      <div class="gallery"></div>
-      <button type="button" class="load-more">Load more</button>
+    <div class="wrap-container">
+      <div class="container">
+        <div class="gallery"></div>
+      </div>
+      <!-- <button type="button" class="load-more">Load more</button> -->
     </div>
+    <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
     <script src="./index.js" type="module"></script>
   </body>
 </html>
