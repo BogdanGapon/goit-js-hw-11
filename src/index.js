@@ -1,5 +1,6 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchImages } from './fetchImages.js';
 import { createMarkup } from './createMarkup.js';
 import LoadMoreBtn from './LoadMoreBtn.js';
@@ -12,30 +13,29 @@ const searchBtn = document.querySelector('.btn-search');
 const gallery = document.querySelector('.gallery');
 const input = document.querySelector('.input');
 
-// const loadMoreBtn = new LoadMoreBtn({ selector: '.load-more' }); // инициализация экземпляра Класса
-window.addEventListener('scroll', onScroll);
+const loadMoreBtn = new LoadMoreBtn({ selector: '.load-more' }); // инициализация экземпляра Класса
 form.addEventListener('submit', onSubmitImages);
-// loadMoreBtn.button.addEventListener('click', onClickBtnLoadMore);
+loadMoreBtn.button.addEventListener('click', onClickBtnLoadMore);
 input.addEventListener('input', onCleanInput);
 
 const activeSimplelightbox = new SimpleLightbox('.gallery a');
 
 function onSubmitImages(evt) {
   evt.preventDefault();
-  //   loadMoreBtn.hide(); // Сначала прячем кнопку, что бы она при повторном сабмите не отображалась
+  loadMoreBtn.hide(); // Сначала прячем кнопку, что бы она при повторном сабмите не отображалась
   pageNumber = 1;
   perPage = 40;
   imgQuery = evt.target.elements.searchQuery.value.trim();
   cleanMarkup();
   fetchImages(imgQuery, pageNumber).then(data => {
     const totalImg = data.data.totalHits;
-    // loadMoreBtn.enabled();
+    loadMoreBtn.enabled();
     const {
       data: { hits },
     } = data;
 
     if (!hits.length) {
-      //   loadMoreBtn.hide();
+      loadMoreBtn.hide();
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
       );
@@ -43,32 +43,32 @@ function onSubmitImages(evt) {
     }
     gallery.innerHTML = createMarkup(hits);
 
-    // loadMoreBtn.show();
+    loadMoreBtn.show();
     activeSimplelightbox.refresh();
     if (totalImg < perPage) {
       Notify.info(`We're sorry, but you've reached the end of search result`);
-      //   loadMoreBtn.disabled();
+      loadMoreBtn.disabled();
     } else Notify.success(`Hooray! We found ${totalImg} images.`);
   });
 }
 
-// function onClickBtnLoadMore(evt) {
-//   evt.preventDefault();
-//   pageNumber += 1;
-//   perPage += 40;
-//   fetchImages(imgQuery, pageNumber).then(data => {
-//     const {
-//       data: { hits },
-//     } = data;
-//     if (data.data.totalHits < perPage) {
-//       Notify.info(`We're sorry, but you've reached the end of search results.`);
-//       loadMoreBtn.disabled();
-//     }
-//     gallery.insertAdjacentHTML('beforeend', createMarkup(hits));
-//     activeSimplelightbox.refresh();
-//     updateScroll();
-//   });
-// }
+function onClickBtnLoadMore(evt) {
+  evt.preventDefault();
+  pageNumber += 1;
+  perPage += 40;
+  fetchImages(imgQuery, pageNumber).then(data => {
+    const {
+      data: { hits },
+    } = data;
+    if (data.data.totalHits < perPage) {
+      Notify.info(`We're sorry, but you've reached the end of search results.`);
+      loadMoreBtn.disabled();
+    }
+    gallery.insertAdjacentHTML('beforeend', createMarkup(hits));
+    activeSimplelightbox.refresh();
+    updateScroll();
+  });
+}
 
 function onCleanInput(e) {
   const text = e.target.value;
@@ -91,28 +91,4 @@ function updateScroll() {
     top: cardHeight * 2,
     behavior: 'smooth',
   });
-}
-
-function onScroll(evt) {
-  const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-  const heightForLoad = scrollTop + clientHeight;
-  if (heightForLoad === scrollHeight) {
-    // evt.preventDefault();
-    pageNumber += 1;
-    perPage += 40;
-    fetchImages(imgQuery, pageNumber).then(data => {
-      const {
-        data: { hits },
-      } = data;
-      if (data.data.totalHits < perPage) {
-        Notify.info(
-          `We're sorry, but you've reached the end of search results.`
-        );
-        loadMoreBtn.disabled();
-      }
-      gallery.insertAdjacentHTML('beforeend', createMarkup(hits));
-      activeSimplelightbox.refresh();
-      updateScroll();
-    });
-  }
 }
